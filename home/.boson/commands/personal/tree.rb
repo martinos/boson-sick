@@ -1,7 +1,7 @@
 # Prints trees of classes and modules.
 module Tree
   def self.config
-    {:dependencies=>['core/class', 'core/module']}
+    {:dependencies=>['core/class', 'core/module','personal/hirb']}
   end
 
   OPTIONS = {:class=>:string, :children_method=>:string, :type=>{:type=>:string, :values=>[:directory, :basic, :number]}}
