@@ -1,2 +1,5 @@
+.DS_Store
+
+.Trashes
 *.swp
 home/.boson/config/index.marshal
