@@ -1,0 +1,9 @@
+gem 'haml', '~>2.0'
+gem 'json', '~>1.4'
+gem 'hirb', '~>0.3'
+gem 'gem-man', '~>0.2'
+gem 'alias', '~>0.2'
+gem 'boson', '0.3'
+gem 'hpricot', '0.6'
+
+
