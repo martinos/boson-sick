@@ -1,5 +1,9 @@
 module GitCmd
-  def gitdiff(filename)
+  def self.included(base)
+    require 'uri'
+  end
+
+  def git_diff(filename)
     log = `git log --oneline #{filename}`
     logs = log.split("\n")
     parsed = logs.map{|a| {:sha => a[0..6], :log => a[7..-1].chomp.strip  }}
@@ -17,5 +21,17 @@ module GitCmd
       puts "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
     end
     nil
+  end
+
+  def create_git_server(ssh_url, git_dir, remote_branch = "origin")
+    url = URI.parse(ssh_url)
+
+    # git_dir = "/home/mchabot/dboson ev/scraptest"
+    cmd = %{ssh #{url.user}@#{url.host} -p #{url.port} "mkdir #{git_dir} && cd #{git_dir} && git init"}
+    system  cmd
+    cmd = %{git remote add origin ssh://#{url.user}@#{url.host}:#{url.port}#{git_dir}}
+    system cmd
+    cmd = %{git push #{remote_branch} master}
+    system cmd
   end
 end
