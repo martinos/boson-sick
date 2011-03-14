@@ -1,6 +1,8 @@
 module GitCmd
   def self.included(base)
     require 'uri'
+    @@url =  URI.parse("ssh://user@host:port")
+    @@git_dir = "root/of/all/servers"
   end
 
   def git_diff(filename)
@@ -26,12 +28,16 @@ module GitCmd
   def create_git_server(ssh_url, git_dir, remote_branch = "origin")
     url = URI.parse(ssh_url)
 
-    # git_dir = "/home/mchabot/dboson ev/scraptest"
     cmd = %{ssh #{url.user}@#{url.host} -p #{url.port} "mkdir #{git_dir} && cd #{git_dir} && git init"}
     system  cmd
     cmd = %{git remote add origin ssh://#{url.user}@#{url.host}:#{url.port}#{git_dir}}
     system cmd
     cmd = %{git push #{remote_branch} master}
+    system cmd
+  end
+
+  def list_repos
+    cmd = %{ssh #{@@url.user}@#{@@url.host} -p #{@@url.port} "ls #{@@git_dir}"} 
     system cmd
   end
 end
