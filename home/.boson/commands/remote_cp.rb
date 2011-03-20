@@ -6,30 +6,31 @@ module RemoteCp
   end
 
   def rmcp(filename = nil)
-    full_path = File.expand_path(filename)
-    basename = File.basename(full_path)
     type = nil
     content_type = nil 
-    content = if File.directory?(full_path)
-      content_type = "application/gzip"
-      io = StringIO.new("", "rb+")
-      tgz = Zlib::GzipWriter.new(io)
-      Minitar.pack(full_path, tgz)
-      basename = "zipped_directory"
-      type = 'directory' 
-      io.rewind
-      io.read
+
+    content = if filename.nil?
+      basename = "anonymous"
+      $stdin.read
     else
-      type = 'file'
-      if filename == nil
-        basename = "anonymous"
-        $stdin.read
+      full_path = File.expand_path(filename)
+      basename = File.basename(full_path)
+      if File.directory?(full_path)
+        content_type = "application/gzip"
+        io = StringIO.new("")
+        tgz = Zlib::GzipWriter.new(io)
+        Minitar.pack(basename, tgz)
+        type = 'directory' 
+        io.rewind
+        io.string
       else
+        type = 'file'
         File.open(full_path)
       end
     end
     s3_connect
 
+    # I think that all this info should be included files metadata
     S3Object.store("file_name.txt", basename, 'RemoteClipboard')
     S3Object.store("content", content, 'RemoteClipboard', :content_type => content_type)
     S3Object.store("type", type, 'RemoteClipboard')
@@ -55,7 +56,7 @@ module RemoteCp
       puts "#{file_name} copied."
     when 'directory'
       tgz = Zlib::GzipReader.new(StringIO.new(content))
-      Minitar.unpack(tgz, file_name)
+      Minitar.unpack(tgz, ".")
     end
   end
 
