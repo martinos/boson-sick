@@ -1,7 +1,7 @@
 module GitCmd
   def self.included(base)
     require 'uri'
-    @@url =  URI.parse("ssh://user@host:port")
+    @@url =  URI.parse("ssh://user@host.com:3333")
     @@git_dir = "root/of/all/servers"
   end
 
