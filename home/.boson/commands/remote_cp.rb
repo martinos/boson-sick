@@ -1,5 +1,4 @@
 module RemoteCp
-
   def rmcp(filename = nil)
     if filename == nil
       basename = "anonymous"
@@ -7,11 +6,9 @@ module RemoteCp
     else
       full_path = File.expand_path(filename)
       basename = File.basename(full_path)
-
       content = File.open(full_path)
     end
     s3_connect
-
 
     S3Object.store("file_name.txt", basename, 'RemoteClipboard')
     S3Object.store("content", content, 'RemoteClipboard')
